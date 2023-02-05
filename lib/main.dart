@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:qr_barcode_scanner/controller/scanner.dart';
+import 'package:qr_barcode_scanner/screen/scan_result.dart';
 import 'package:qr_barcode_scanner/screen/scanner.dart';
 
 Future<void> main() async {
@@ -36,6 +37,7 @@ class MyApp extends StatelessWidget {
           page: () => ScannerScreen(),
           // binding: ScannerBinding(),
         ),
+        // GetPage(name: ScanResultScreen.routeName, page: () => ScanResultScreen(content: content),),
       ],
     );
   }
