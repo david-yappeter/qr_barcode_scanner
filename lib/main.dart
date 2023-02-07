@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:hive/hive.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:qr_barcode_scanner/controller/hive.dart';
 import 'package:qr_barcode_scanner/controller/scanner.dart';
 import 'package:qr_barcode_scanner/enum/code.dart';
@@ -15,7 +16,9 @@ Future<void> main() async {
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
   ]);
-  Hive.init('./');
+
+  final directory = await getApplicationDocumentsDirectory();
+  Hive.init(directory.path);
   Hive.registerAdapter(HistoryAdapter());
   Hive.registerAdapter(QRCodeAdapter());
   Hive.registerAdapter(BarcodeAdapter());

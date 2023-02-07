@@ -3,6 +3,8 @@ import 'package:hive/hive.dart';
 import 'package:qr_barcode_scanner/model/history.dart';
 
 class HiveController extends GetxController {
+  static HiveController get to => Get.find();
+
   String historyBoxScanKey = 'histories.scan';
   RxList<History> histories = RxList([]);
   late Box _box;
@@ -15,7 +17,7 @@ class HiveController extends GetxController {
   }
 
   void _getHistory() {
-    histories.value = _box.get(historyBoxScanKey) ?? [];
+    histories.value = _box.get(historyBoxScanKey)?.cast<History>() ?? [];
   }
 
   Future<void> addHistory(History history) async {

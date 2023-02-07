@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:qr_barcode_scanner/controller/hive.dart';
 import 'package:qr_barcode_scanner/controller/scanner.dart';
@@ -6,6 +7,7 @@ import 'package:flutter_zxing/flutter_zxing.dart';
 import 'package:qr_barcode_scanner/model/code.dart';
 import 'package:qr_barcode_scanner/model/history.dart';
 import 'package:qr_barcode_scanner/screen/history.dart';
+import 'package:qr_barcode_scanner/screen/qr_preview.dart';
 import 'package:qr_barcode_scanner/screen/scan_result.dart';
 
 class ScannerScreen extends GetView<ScannerController> {
@@ -20,8 +22,16 @@ class ScannerScreen extends GetView<ScannerController> {
         scanDelaySuccess: const Duration(seconds: 1),
         onScan: (result) async {
           if (result.text != null) {
-            Get.to(
-              ScanResultScreen(content: result.text!),
+            final hiveController = HiveController.to;
+            hiveController.addHistory(
+              History(
+                code: QRCode(content: result.text!),
+                dateTime: DateTime.now(),
+              ),
+            );
+
+            Get.offAll(
+              () => ScanResultScreen(code: QRCode(content: result.text!)),
             );
           }
         },
@@ -30,28 +40,40 @@ class ScannerScreen extends GetView<ScannerController> {
   }
 
   Widget buildCreate() {
-    Widget buildTile({required IconData icon, required String title}) {
+    Widget buildTile(
+        {required IconData icon, required String title, Function()? onTap}) {
       return ListTile(
         leading: Icon(icon),
         title: Text(
           title,
         ),
-        onTap: () {
-          final HiveController hiveController = Get.find();
-          hiveController.addHistory(
-            History(
-              code: QRCode(content: "ABC"),
-              dateTime: DateTime.now(),
-            ),
-          );
-        },
+        onTap: onTap,
       );
     }
 
     return ListView(
       children: [
         buildTile(icon: Icons.share, title: "Use \"Share\" in other apps"),
-        buildTile(icon: Icons.copy, title: "Content from clipboard"),
+        buildTile(
+            icon: Icons.copy,
+            title: "Content from clipboard",
+            onTap: () async {
+              final copiedText =
+                  (await Clipboard.getData('text/plain'))?.text ?? '';
+              final hiveController = HiveController.to;
+              hiveController.addHistory(
+                History(
+                  code: QRCode(content: copiedText),
+                  dateTime: DateTime.now(),
+                ),
+              );
+
+              Get.to(
+                () => QrPreviewScreen(
+                  code: QRCode(content: copiedText),
+                ),
+              );
+            }),
         buildTile(icon: Icons.public, title: "Website"),
         buildTile(icon: Icons.person_add, title: "Contact"),
         buildTile(icon: Icons.wifi, title: "Wi-Fi"),
@@ -96,10 +118,7 @@ class ScannerScreen extends GetView<ScannerController> {
         body: TabBarView(
           controller: controller.tabBarController,
           children: <Widget>[
-            // buildScanner(),
-            const Center(
-              child: Text("It's sunny here"),
-            ),
+            buildScanner(),
             buildCreate(),
             const HistoryScreen(),
             const Center(
