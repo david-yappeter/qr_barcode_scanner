@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:get_storage/get_storage.dart';
+import 'package:hive/hive.dart';
+import 'package:qr_barcode_scanner/controller/hive.dart';
 import 'package:qr_barcode_scanner/controller/scanner.dart';
-import 'package:qr_barcode_scanner/screen/scan_result.dart';
+import 'package:qr_barcode_scanner/enum/code.dart';
+import 'package:qr_barcode_scanner/model/code.dart';
+import 'package:qr_barcode_scanner/model/history.dart';
 import 'package:qr_barcode_scanner/screen/scanner.dart';
 
 Future<void> main() async {
@@ -12,9 +15,14 @@ Future<void> main() async {
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
   ]);
-  await GetStorage.init();
+  Hive.init('./');
+  Hive.registerAdapter(HistoryAdapter());
+  Hive.registerAdapter(QRCodeAdapter());
+  Hive.registerAdapter(BarcodeAdapter());
+  Hive.registerAdapter(CodeTypeAdapter());
 
   Get.put(ScannerController());
+  Get.put(HiveController());
 
   runApp(const MyApp());
 }
@@ -34,10 +42,8 @@ class MyApp extends StatelessWidget {
       getPages: [
         GetPage(
           name: ScannerScreen.routeName,
-          page: () => ScannerScreen(),
-          // binding: ScannerBinding(),
+          page: () => const ScannerScreen(),
         ),
-        // GetPage(name: ScanResultScreen.routeName, page: () => ScanResultScreen(content: content),),
       ],
     );
   }
