@@ -9,6 +9,8 @@ import 'package:qr_barcode_scanner/model/history.dart';
 import 'package:qr_barcode_scanner/screen/history.dart';
 import 'package:qr_barcode_scanner/screen/qr_preview.dart';
 import 'package:qr_barcode_scanner/screen/scan_result.dart';
+import 'package:qr_barcode_scanner/screen/text.dart';
+import 'package:qr_barcode_scanner/screen/website.dart';
 
 class ScannerScreen extends GetView<ScannerController> {
   static const routeName = '/scanner';
@@ -53,7 +55,7 @@ class ScannerScreen extends GetView<ScannerController> {
 
     return ListView(
       children: [
-        buildTile(icon: Icons.share, title: "Use \"Share\" in other apps"),
+        // buildTile(icon: Icons.share, title: "Use \"Share\" in other apps"),
         buildTile(
             icon: Icons.copy,
             title: "Content from clipboard",
@@ -74,14 +76,27 @@ class ScannerScreen extends GetView<ScannerController> {
                 ),
               );
             }),
-        buildTile(icon: Icons.public, title: "Website"),
-        buildTile(icon: Icons.person_add, title: "Contact"),
-        buildTile(icon: Icons.wifi, title: "Wi-Fi"),
-        buildTile(icon: Icons.location_on_outlined, title: "Location"),
-        buildTile(icon: Icons.calendar_month_outlined, title: "Event"),
-        buildTile(icon: Icons.qr_code_outlined, title: "More QR codes"),
         buildTile(
-            icon: Icons.quiz_rounded, title: "Barcodes and other 2D Codes"),
+          icon: Icons.public,
+          title: "Website",
+          onTap: () {
+            Get.to(() => WebsiteScreen());
+          },
+        ),
+        buildTile(
+          icon: Icons.text_fields,
+          title: "Text",
+          onTap: () {
+            Get.to(() => TextScreen());
+          },
+        ),
+        // buildTile(icon: Icons.person_add, title: "Contact"),
+        // buildTile(icon: Icons.wifi, title: "Wi-Fi"),
+        // buildTile(icon: Icons.location_on_outlined, title: "Location"),
+        // buildTile(icon: Icons.calendar_month_outlined, title: "Event"),
+        // buildTile(icon: Icons.qr_code_outlined, title: "More QR codes"),
+        // buildTile(
+        //     icon: Icons.quiz_rounded, title: "Barcodes and other 2D Codes"),
       ],
     );
   }
